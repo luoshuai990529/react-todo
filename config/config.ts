@@ -1,7 +1,9 @@
 import { defineConfig } from 'umi';
 import routes from './routes';
+import { TITLE } from '../src/utils/constant';
 
 export default defineConfig({
-  hash:true,
+  title: TITLE,
+  hash: true,
   routes: routes,
 });

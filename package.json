@@ -21,7 +21,10 @@
   },
   "dependencies": {
     "@ant-design/pro-layout": "^6.5.0",
+    "@types/react-motion": "^0.0.29",
     "@umijs/preset-react": "1.x",
+    "ahooks": "^2.10.5",
+    "react-motion": "^0.5.2",
     "umi": "^3.4.23"
   },
   "devDependencies": {
