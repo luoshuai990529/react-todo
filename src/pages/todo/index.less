@@ -1,80 +1,220 @@
 .todo-page {
-  width: 100%;
-  height: 100%;
-  .header {
-    display: flex;
-    background-color: #3d3d3d;
-    color: #fff;
-    line-height: 30px;
-    justify-content: space-between;
-    padding: 5px 20px;
-    .btn-unfoldmenu,
-    .btn-addtask,
-    .btn-mymessage {
-      display: inline-block;
-      width: 34px;
-      text-align: center;
-      line-height: 32px;
-      cursor: pointer;
-      padding: 0 6px;
-      border-radius: 4px;
-      font-size: 20px;
-      &:hover {
-        background-color: hsla(0, 0%, 100%, 0.2);
-      }
-    }
-    .left {
-      display: flex;
-    }
-    .right {
-      display: flex;
-      .btn-addtask {
-        margin-right: 10px;
-      }
-    }
-  }
-  .content {
-    color: #fff;
-    height: calc(100% - 43px);
-    display: flex;
-    -o-user-select: none;
-    -moz-user-select: none; /*火狐 firefox*/
-    -webkit-user-select: none; /*webkit浏览器*/
-    -ms-user-select: none; /*IE10+*/
-    -khtml-user-select: none; /*早期的浏览器*/
-    user-select: none;
-    .left-menu,
-    .right-list {
-      height: 100%;
-    }
-    .left-menu {
-      position: relative;
-      min-width: 200px;
-      max-width: 370px;
-      color: #202020;
-      background-color: #fafafa;
-      transition: all 0.3s ease;
-      overflow: hidden;
-      &.hidden {
-        width: 0;
-        min-width: 0;
-      }
-      .resize-handle {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 5px;
-        height: 100%;
-        background-color: rgb(143, 143, 143);
-        cursor: col-resize;
-        &:hover {
-          background-color: #555;
+    width: 100%;
+    height: 100%;
+    .header {
+        display: flex;
+        background-color: #3d3d3d;
+        color: #fff;
+        line-height: 30px;
+        justify-content: space-between;
+        padding: 5px 20px;
+        .btn-unfoldmenu,
+        .btn-addtask,
+        .btn-full,
+        .btn-mymessage {
+            display: inline-block;
+            width: 34px;
+            text-align: center;
+            line-height: 32px;
+            cursor: pointer;
+            padding: 0 6px;
+            border-radius: 4px;
+            font-size: 20px;
+            &:hover {
+                background-color: hsla(0, 0%, 100%, 0.2);
+            }
         }
-      }
+        .left {
+            display: flex;
+        }
+        .right {
+            display: flex;
+            .btn-full,
+            .btn-addtask {
+                margin-right: 10px;
+            }
+        }
     }
-    .right-list {
-      flex: 1;
-      background-color: #6bb7ff;
+    .content {
+        height: calc(100% - 43px);
+        display: flex;
+
+        .left-menu,
+        .right-list {
+            height: 100%;
+        }
+        .left-menu {
+            position: relative;
+            min-width: 210px;
+            max-width: 370px;
+            color: #202020;
+            background-color: #fafafa; //fafafa
+            transition: all 0.3s ease;
+            transition-property: width, opacity, visibility;
+            -o-user-select: none;
+            -moz-user-select: none; /*火狐 firefox*/
+            -webkit-user-select: none; /*webkit浏览器*/
+            -ms-user-select: none; /*IE10+*/
+            -khtml-user-select: none; /*早期的浏览器*/
+            user-select: none;
+            //   overflow-y: auto;
+            &.hidden {
+                min-width: 0;
+                opacity: 0;
+                visibility: hidden;
+            }
+            .resize-handle {
+                position: absolute;
+                top: 0;
+                right: -5px;
+                width: 5px;
+                height: 100%;
+                background-color: #fafafa;
+                cursor: col-resize;
+                &:hover {
+                    background-color: #eeeeee;
+                }
+            }
+            &:hover {
+                .list::-webkit-scrollbar {
+                    width: 6px;
+                }
+            }
+            //   列表样式
+            .list {
+                height: 100%;
+                min-width: 190px;
+                padding: 20px 0px 15px 10px;
+                overflow-y: auto;
+
+                &::-webkit-scrollbar {
+                    width: 0px;
+                    height: 200px;
+                }
+                /*滚动条滑块*/
+                &::-webkit-scrollbar-thumb {
+                    /*滚动条里面小方块*/
+                    border-radius: 10px;
+                    box-shadow: inset 0 0 5px #d8d8d8;
+                    background: #7b7b7b;
+                }
+                /*滚动条轨道*/
+                &::-webkit-scrollbar-track {
+                    /*滚动条里面轨道*/
+                    box-shadow: inset 0 0 5px #d8d8d8;
+                    border-radius: 10px;
+                    background: #ededed;
+                }
+                .sundry,
+                .today,
+                .preview {
+                    display: flex;
+                    vertical-align: middle;
+                    padding: 6px;
+                    border-radius: 4px 0 0 4px;
+                    cursor: pointer;
+                    &.active {
+                        background-color: #fff;
+                    }
+                    &:hover {
+                        background-color: #fff;
+                    }
+                    .menu-text {
+                        margin-left: 8px;
+                        line-height: 24px;
+                        word-break: break-word;
+                    }
+                    &.sec-active {
+                        font-weight: 600;
+                        background-color: #fff;
+                    }
+                }
+                .sundry svg {
+                    color: #246fe0;
+                }
+                .today svg {
+                    color: #058527;
+                }
+                .preview svg {
+                    color: #692fc2;
+                }
+                // antd折叠面板样式
+                .ant-collapse {
+                    min-width: 180px;
+                    .ant-collapse-item {
+                        .ant-collapse-header {
+                            &:hover {
+                                background-color: #f7f7f7;
+                            }
+                        }
+                        .ant-collapse-content-box {
+                            padding: 10px;
+                            .project-item,
+                            .project-item-children {
+                                position: relative;
+                                cursor: pointer;
+                                line-height: 32px;
+                                border-radius: 4px;
+                                &.sec-active {
+                                    font-weight: 600;
+                                    background-color: #fff;
+                                }
+                                &:hover {
+                                    .extend {
+                                        display: block;
+                                    }
+                                }
+                                .extend {
+                                    display: none;
+                                    position: absolute;
+                                    right: 10px;
+                                    top: -3px;
+                                    svg {
+                                        color: #c4c4c4;
+                                    }
+                                }
+                            }
+                            .project-item {
+                                padding: 0px 0px 0px 10px;
+
+                                i.arrow {
+                                    box-sizing: border-box;
+                                    padding-top: 10px;
+                                    position: absolute;
+                                    left: -22px;
+                                    top: 50%;
+                                    transform: translateY(-50%);
+                                    transform-origin: center;
+                                }
+                                i.arrow.right svg {
+                                    transform: rotate(-90deg);
+                                }
+                                i.arrow.down svg {
+                                    transform: rotate(0deg);
+                                }
+                            }
+                            .project-item-children {
+                                padding: 0px 0px 0px 15px;
+                            }
+                        }
+                    }
+                    .ant-collapse-header {
+                        padding: 8px 10px;
+                        .panel-header {
+                            display: inline-block;
+                            width: 80%;
+                            i {
+                                float: right;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .right-list {
+            flex: 1;
+            padding: 10px;
+            background-color: #ffffff;
+        }
     }
-  }
 }
