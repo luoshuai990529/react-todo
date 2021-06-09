@@ -1,15 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 // import {Motion, spring,presets} from 'react-motion';
 import './index.less';
-import { Tooltip, Badge, Collapse } from 'antd';
+import { Tooltip, Badge, Collapse, Drawer } from 'antd';
 import { MenuOutlined, PlusOutlined, MessageOutlined, FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
-import { configResponsive, useResponsive, useFullscreen } from 'ahooks';
+import { configResponsive, useResponsive, useFullscreen, useSize } from 'ahooks';
 import TodaySvg from '@/art/todaySvg';
 import SundrySvg from '@/art/sundrySvg';
 import PreviewSvg from '@/art/previewSvg';
 import ExtendSvg from '@/art/extendSvg';
 import ArrowRightSvg from '@/art/arrowRightSvg';
 import { TODO_MENU_MAP } from '@/utils/constant';
+import ResponseShowDrawer from './component/response-show-drawer';
 const { Panel } = Collapse;
 
 configResponsive({
@@ -45,6 +46,16 @@ export default function IndexPage() {
     const [menuWidth, setMenuWidth] = useState(210); // 菜单宽度
     const [secMenu, setSecMenu] = useState(TODO_MENU_MAP.SUNDRY); // 选择菜单
     const [projectMenu, setProjectList] = useState(projectList); // 项目列表
+
+    const [showMobileStyle, setShowMobileStyle] = useState(!responsive.middle);
+
+    useEffect(() => {
+        const isMobile = !responsive.middle;
+        setShowMobileStyle(isMobile);
+        setUnfoldMenu(!isMobile);
+        isMobile ? setMenuWidth(0) : setMenuWidth(210);
+    }, [responsive.middle]);
+
     //  展开收起菜单
     const unfoldMenuHandle = () => {
         setUnfoldMenu(!unfoldMenu);
@@ -119,63 +130,65 @@ export default function IndexPage() {
                 </div>
             </div>
             <div className="content" onMouseMove={resizeMouseMove}>
-                <div className={unfoldMenu ? 'left-menu' : 'left-menu hidden'} ref={menuRef} style={startDrag ? { width: `${menuWidth}px`, transition: 'none' } : { width: `${menuWidth}px` }}>
-                    <div className="resize-handle" id="left-menu-resize" onMouseDown={resizeMouseDowm}></div>
-                    <div className="list">
-                        <div className={secMenu === TODO_MENU_MAP.SUNDRY ? 'sundry sec-active' : 'sundry'} onClick={() => selectMenu(TODO_MENU_MAP.SUNDRY)}>
-                            <SundrySvg /> <span className="menu-text">杂事箱</span>
-                            <Badge size="small" count={0}></Badge>
-                        </div>
-                        <div className={secMenu === TODO_MENU_MAP.TODAY ? 'today sec-active' : 'today'} onClick={() => selectMenu(TODO_MENU_MAP.TODAY)}>
-                            <TodaySvg day={'05'} /> <span className="menu-text">今天</span>
-                            <Badge size="small" count={0}></Badge>
-                        </div>
-                        <div className={secMenu === TODO_MENU_MAP.PREVIEW ? 'preview sec-active' : 'preview'} onClick={() => selectMenu(TODO_MENU_MAP.PREVIEW)}>
-                            <PreviewSvg />
-                            <span className="menu-text">预览</span>
-                        </div>
-                        <Collapse bordered={false} style={{ width: `calc(${menuWidth}px - 27px)` }}>
-                            <Panel header={<PanelHeader onClick={addProject} text="项目" />} key="project">
-                                {projectMenu.map((item) => (
-                                    <React.Fragment key={item.projectId}>
-                                        <div className={secMenu === item.projectId ? 'project-item sec-active' : 'project-item'} onClick={() => setSecMenu(item.projectId)}>
-                                            {item.childrens && item.childrens.length > 0 && (
-                                                <i className={item.showChildren ? 'arrow down' : 'arrow right'} onClick={(e: React.MouseEvent) => unfoldChildren(e, item.projectId)}>
-                                                    <ArrowRightSvg />
+                <ResponseShowDrawer {...{ unfoldMenu, setUnfoldMenu, showMobileStyle }}>
+                    <div className={unfoldMenu ? 'left-menu' : 'left-menu hidden'} ref={menuRef} style={startDrag ? { width: `${menuWidth}px`, transition: 'none' } : { width: `${menuWidth}px` }}>
+                        <div className="resize-handle" style={showMobileStyle ? { display: 'none' } : {}} id="left-menu-resize" onMouseDown={resizeMouseDowm}></div>
+                        <div className={showMobileStyle ? 'list show-mobile' : 'list'}>
+                            <div className={secMenu === TODO_MENU_MAP.SUNDRY ? 'sundry sec-active' : 'sundry'} onClick={() => selectMenu(TODO_MENU_MAP.SUNDRY)}>
+                                <SundrySvg /> <span className="menu-text">杂事箱</span>
+                                <Badge size="small" count={0}></Badge>
+                            </div>
+                            <div className={secMenu === TODO_MENU_MAP.TODAY ? 'today sec-active' : 'today'} onClick={() => selectMenu(TODO_MENU_MAP.TODAY)}>
+                                <TodaySvg day={'05'} /> <span className="menu-text">今天</span>
+                                <Badge size="small" count={0}></Badge>
+                            </div>
+                            <div className={secMenu === TODO_MENU_MAP.PREVIEW ? 'preview sec-active' : 'preview'} onClick={() => selectMenu(TODO_MENU_MAP.PREVIEW)}>
+                                <PreviewSvg />
+                                <span className="menu-text">预览</span>
+                            </div>
+                            <Collapse bordered={false} style={{ width: `calc(${menuWidth}px - 27px)` }}>
+                                <Panel header={<PanelHeader onClick={addProject} text="项目" />} key="project">
+                                    {projectMenu.map((item) => (
+                                        <React.Fragment key={item.projectId}>
+                                            <div className={secMenu === item.projectId ? 'project-item sec-active' : 'project-item'} onClick={() => setSecMenu(item.projectId)}>
+                                                {item.childrens && item.childrens.length > 0 && (
+                                                    <i className={item.showChildren ? 'arrow down' : 'arrow right'} onClick={(e: React.MouseEvent) => unfoldChildren(e, item.projectId)}>
+                                                        <ArrowRightSvg />
+                                                    </i>
+                                                )}
+                                                <Badge size="small" color={item.color}></Badge>
+                                                {item.name}
+                                                <i className="extend" onClick={(e: React.MouseEvent) => operatorProject(e, item.projectId)}>
+                                                    <ExtendSvg />
                                                 </i>
+                                            </div>
+                                            {item.childrens && item.childrens.length > 0 && item.showChildren && (
+                                                <>
+                                                    {item.childrens.map((child) => {
+                                                        return (
+                                                            <div
+                                                                key={child.projectId}
+                                                                className={secMenu === child.projectId ? 'project-item-children sec-active' : 'project-item-children'}
+                                                                onClick={() => setSecMenu(child.projectId)}
+                                                            >
+                                                                <Badge size="small" color={child.color}></Badge>
+                                                                {child.name}
+                                                                <i className="extend" onClick={(e: React.MouseEvent) => operatorProject(e, child.projectId)}>
+                                                                    <ExtendSvg />
+                                                                </i>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </>
                                             )}
-                                            <Badge size="small" color={item.color}></Badge>
-                                            {item.name}
-                                            <i className="extend" onClick={(e: React.MouseEvent) => operatorProject(e, item.projectId)}>
-                                                <ExtendSvg />
-                                            </i>
-                                        </div>
-                                        {item.childrens && item.childrens.length > 0 && item.showChildren && (
-                                            <>
-                                                {item.childrens.map((child) => {
-                                                    return (
-                                                        <div
-                                                            key={child.projectId}
-                                                            className={secMenu === child.projectId ? 'project-item-children sec-active' : 'project-item-children'}
-                                                            onClick={() => setSecMenu(child.projectId)}
-                                                        >
-                                                            <Badge size="small" color={child.color}></Badge>
-                                                            {child.name}
-                                                            <i className="extend" onClick={(e: React.MouseEvent) => operatorProject(e, child.projectId)}>
-                                                                <ExtendSvg />
-                                                            </i>
-                                                        </div>
-                                                    );
-                                                })}
-                                            </>
-                                        )}
-                                    </React.Fragment>
-                                ))}
-                            </Panel>
-                            <Panel header={<PanelHeader onClick={addTags} text="标签" />} key="tags"></Panel>
-                        </Collapse>
+                                        </React.Fragment>
+                                    ))}
+                                </Panel>
+                                <Panel header={<PanelHeader onClick={addTags} text="标签" />} key="tags"></Panel>
+                            </Collapse>
+                        </div>
                     </div>
-                </div>
+                </ResponseShowDrawer>
                 <div className="right-list">{secMenu}</div>
             </div>
         </div>
