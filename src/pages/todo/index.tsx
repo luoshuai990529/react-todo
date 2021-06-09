@@ -11,6 +11,7 @@ import ExtendSvg from '@/art/extendSvg';
 import ArrowRightSvg from '@/art/arrowRightSvg';
 import { TODO_MENU_MAP } from '@/utils/constant';
 import ResponseShowDrawer from './component/response-show-drawer';
+import TabSundry from './component/tab-sundry/index';
 const { Panel } = Collapse;
 
 configResponsive({
@@ -189,7 +190,11 @@ export default function IndexPage() {
                         </div>
                     </div>
                 </ResponseShowDrawer>
-                <div className="right-list">{secMenu}</div>
+                <div className="right-list">
+                    {secMenu === TODO_MENU_MAP.SUNDRY && <TabSundry />}
+                    {secMenu === TODO_MENU_MAP.TODAY && '今天'}
+                    {secMenu === TODO_MENU_MAP.PREVIEW && '预览'}
+                </div>
             </div>
         </div>
     );

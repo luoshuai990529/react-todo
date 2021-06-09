@@ -1,0 +1,52 @@
+.tab-sundry {
+    border: 1px solid black;
+    .tab-header {
+        display: flex;
+        justify-content: space-between;
+        .title {
+            font-size: 20px;
+            line-height: 25px;
+            font-weight: 700;
+        }
+        .operator {
+            line-height: 25px;
+            svg {
+                vertical-align: middle;
+                cursor: pointer;
+                margin-right: 10px;
+            }
+        }
+    }
+    .add-event {
+        margin-top: 10px;
+        &:hover {
+            cursor: pointer;
+            .add-svg {
+                background-color: rgb(31, 31, 31);
+            }
+            svg {
+                color: #fff;
+            }
+        }
+        .add-svg {
+            position: relative;
+            width: 17px;
+            height: 17px;
+            display: inline-block;
+            border-radius: 50%;
+            vertical-align: middle;
+            svg {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                margin: auto;
+            }
+        }
+        .desc {
+            vertical-align: middle;
+            margin-left: 5px;
+        }
+    }
+}

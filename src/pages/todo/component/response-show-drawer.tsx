@@ -14,7 +14,7 @@ function ResponseShowDrawer(props: PropsType) {
         <React.Fragment>
             {showMobileStyle ? (
                 <Drawer
-                    title="Basic Drawer"
+                    title="Event List"
                     getContainer={false}
                     mask
                     style={{ position: 'absolute' }}
