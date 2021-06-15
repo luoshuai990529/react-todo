@@ -50,7 +50,7 @@
             color: #202020;
             background-color: #fafafa; //fafafa
             transition: all 0.3s ease;
-            transition-property: width, opacity, visibility;
+            // transition-property: width, opacity, visibility;
             // 文本不允许选中
             -o-user-select: none;
             -moz-user-select: none; /*火狐 firefox*/
@@ -78,7 +78,7 @@
             }
             &:hover {
                 .list::-webkit-scrollbar {
-                    width: 6px;
+                    display: block;
                 }
             }
             //   列表样式
@@ -87,9 +87,9 @@
                 min-width: 190px;
                 padding: 20px 0px 15px 10px;
                 overflow-y: auto;
-
                 &::-webkit-scrollbar {
-                    width: 0px;
+                    width: 6px;
+                    display: none;
                     height: 200px;
                 }
                 /*滚动条滑块*/
