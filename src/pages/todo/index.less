@@ -51,6 +51,7 @@
             background-color: #fafafa; //fafafa
             transition: all 0.3s ease;
             transition-property: width, opacity, visibility;
+            // 文本不允许选中
             -o-user-select: none;
             -moz-user-select: none; /*火狐 firefox*/
             -webkit-user-select: none; /*webkit浏览器*/
@@ -215,8 +216,9 @@
         }
         .right-list {
             flex: 1;
-            padding: 25px;
+            padding: 25px 55px;
             background-color: #ffffff;
+            overflow-y: auto;
         }
     }
 }

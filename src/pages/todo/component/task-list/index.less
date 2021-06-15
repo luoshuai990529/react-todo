@@ -1,0 +1,105 @@
+.task-list {
+    .task-item {
+        position: relative;
+        margin-top: 3px;
+        height: 56px;
+        border-bottom: 1px solid #f0f0f0;
+        padding-top: 5px;
+        cursor: pointer;
+        &:hover {
+            .btn-action {
+                visibility: visible;
+            }
+        }
+        .btn-action {
+            visibility: hidden;
+            position: absolute;
+            right: 0px;
+            top: 0px;
+            display: flex;
+            .editor,
+            .more {
+                display: inline-block;
+                width: 24px;
+                height: 24px;
+                text-align: center;
+                margin-right: 10px;
+                &:hover {
+                    cursor: pointer;
+                    background-color: #eeeeee;
+                    svg {
+                        color: #202020;
+                    }
+                }
+            }
+            svg {
+                color: #808080;
+            }
+        }
+        .task-desc {
+            line-height: 21px;
+            cursor: pointer;
+        }
+        .task-time {
+            line-height: 12px;
+            font-size: 12px;
+            color: #808080;
+            margin-top: 3px;
+            &.yesterday {
+                color: #cf443a;
+            }
+            &.tomorrow {
+                color: #ad6200;
+            }
+            &.today {
+                color: #058527;
+            }
+            .date,
+            svg {
+                vertical-align: middle;
+            }
+            .date {
+                margin-left: 3px;
+            }
+        }
+    }
+}
+.add-evnet {
+    &-action {
+        margin-top: 5px;
+        margin-bottom: 10px;
+        &:hover {
+            cursor: pointer;
+            .add-svg {
+                background-color: rgb(31, 31, 31);
+            }
+            svg {
+                color: #fff;
+            }
+            .desc {
+                color: black;
+            }
+        }
+        .add-svg {
+            position: relative;
+            width: 17px;
+            height: 17px;
+            display: inline-block;
+            border-radius: 50%;
+            vertical-align: middle;
+            svg {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                margin: auto;
+            }
+        }
+        .desc {
+            vertical-align: middle;
+            margin-left: 10px;
+            color: #808080;
+        }
+    }
+}
