@@ -24,6 +24,8 @@
     "@types/react-motion": "^0.0.29",
     "@umijs/preset-react": "1.x",
     "ahooks": "^2.10.5",
+    "immer": "^9.0.3",
+    "lewis-todo-components": "^1.0.2",
     "react-motion": "^0.5.2",
     "umi": "^3.4.23"
   },

@@ -38,7 +38,9 @@
     .content {
         height: calc(100vh - 88px);
         display: flex;
-
+        a {
+            color: #202020;
+        }
         .left-menu,
         .right-list {
             height: 100%;
@@ -125,10 +127,10 @@
                         line-height: 24px;
                         word-break: break-word;
                     }
-                    &.sec-active {
-                        font-weight: 600;
-                        background-color: #fff;
-                    }
+                }
+                .sec-active {
+                    font-weight: 600;
+                    background-color: #fff;
                 }
                 .sundry svg {
                     color: #246fe0;
@@ -182,7 +184,7 @@
                                     box-sizing: border-box;
                                     padding-top: 10px;
                                     position: absolute;
-                                    left: -22px;
+                                    left: -18px;
                                     top: 50%;
                                     transform: translateY(-50%);
                                     transform-origin: center;

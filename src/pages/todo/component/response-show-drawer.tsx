@@ -24,7 +24,7 @@ function ResponseShowDrawer(props: PropsType) {
                     visible={unfoldMenu}
                     key={'left'}
                 >
-                    {props.children}
+                    {children}
                 </Drawer>
             ) : (
                 children

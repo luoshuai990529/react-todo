@@ -5,6 +5,7 @@ import Input from '../input/index';
 import ModuleList, { ModuleItem } from '../module-list/index';
 import TaskList, { TaskItemType } from '../task-list/index';
 import './index.less';
+import produce from 'immer';
 
 function TabSundry() {
     const [showAddModules, setShowAddModules] = useState(false);
@@ -27,10 +28,12 @@ function TabSundry() {
                 updateTime: '2021-06-10 16:00:00',
             },
         ];
-        testModuleList.forEach((item) => {
-            item.unfold = false;
+        const nextModuleList = produce(testModuleList, (draftList) => {
+            draftList.forEach((item) => {
+                item.unfold = false;
+            });
         });
-        setModuleList(testModuleList);
+        setModuleList(nextModuleList);
         setTaskList(testTaskList);
     }, []);
 
@@ -41,11 +44,12 @@ function TabSundry() {
         console.log('添加任务', moduleId);
     };
     const unfoldModuleItem = (id: number) => {
-        const newModuleList = moduleList.map((module: ModuleItem) => {
-            if (module.id === id) module.unfold = !module.unfold;
-            return module;
+        const nextModuleList = produce(moduleList, (draftList) => {
+            draftList.forEach((module: ModuleItem) => {
+                if (module.id === id) module.unfold = !module.unfold;
+            });
         });
-        setModuleList(newModuleList);
+        setModuleList(nextModuleList);
     };
     return (
         <div className="tab-sundry">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './index.less';
 import AddSvg from '@/art/addSvg';
 import DateSvg from '@/art/dateSvg';
@@ -6,53 +6,40 @@ import EditSvg from '@/art/editSvg';
 import MoreSvg from '@/art/moreSvg';
 import ExtendSvg from '@/art/extendSvg';
 import Input from '../input/index';
+import { DatePicker } from 'lewis-todo-components';
 
 export interface TaskItemType {
-    id: number;
-    sequence: number;
-    parentModule?: number;
-    status: number;
-    taskDesc: string;
-    deadline: string;
-    createTime?: string;
-    updateTime?: string;
+    id: number; // 唯一ID
+    sequence: number; // 序号
+    parentModule?: number; // 所属父模块
+    status: number; // 任务状态
+    taskDesc: string; // 任务描述
+    deadline: string; // 截止日期
+    createTime?: string; // 创建时间
+    updateTime?: string; // 更新时间
 }
 
 interface PropsType {
-    moduleId?: number;
-    taskList: Array<TaskItemType>;
-    confirmAddTask: (moduleId: any) => void;
+    moduleId?: number; //模块Id
+    taskList: Array<TaskItemType>; // 任务列表
+    confirmAddTask: (moduleId: any) => void; // 确认添加任务回调
 }
 
 function AddTask(props: PropsType) {
     const [showTask, setShowTask] = useState(false);
     const [taskDesc, setTaskDesc] = useState('');
     const { confirmAddTask, moduleId, taskList } = props;
+    useEffect(() => {
+        console.log('addTask useEffect');
+    }, []);
     return (
         <React.Fragment>
             <div className="task-list">
                 {taskList.map((task) => {
-                    let className;
-                    switch (task.deadline) {
-                        case '明天':
-                            className = 'tomorrow';
-                            break;
-                        case '今天':
-                            className = 'today';
-                            break;
-                        case '昨天':
-                            className = 'yesterday';
-                            break;
-                        default:
-                            break;
-                    }
                     return (
                         <div key={task.id} className="task-item">
                             <div className="task-desc">{task.taskDesc}</div>
-                            <div className={`task-time ${className}`}>
-                                <DateSvg />
-                                <span className="date">{task.deadline}</span>
-                            </div>
+                            <DatePicker btnType="simple" />
                             <div className="btn-action">
                                 <div className="editor">
                                     <EditSvg />
