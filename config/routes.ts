@@ -3,7 +3,7 @@ export default [
         path: '/',
         component: '@/layouts/index',
         routes: [
-            { path: '/', redirect: '/home' },
+            { path: '/', redirect: '/todo' },
             { path: '/todo', redirect: '/todo/sundry' },
             { path: '/home', component: 'index', name: '首页' },
             {
@@ -23,6 +23,10 @@ export default [
             },
             {
                 path: '/todo/project',
+                component: 'todo',
+            },
+            {
+                path: '/todo/tags',
                 component: 'todo',
             },
             { component: './404' },

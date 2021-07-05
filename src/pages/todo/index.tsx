@@ -12,6 +12,7 @@ import { TODO_MENU_MAP, TodoMenuType, MenuItem } from '@/utils/constant';
 import ResponseShowDrawer from './component/response-show-drawer';
 import TabSundry from './component/tab-sundry/index';
 import TabToday from './component/tab-today/index';
+import TbaProject from './component/tab-project/index';
 import TabPreview from './component/tab-preview/index';
 const { Panel } = Collapse;
 import produce from 'immer'; // 不可变数据处理库
@@ -26,7 +27,11 @@ export interface ProjectItem {
     showChildren?: boolean;
     childrens?: Array<any>;
 }
-
+export interface TagsItem {
+    name: string;
+    tagId: number;
+    color: string;
+}
 interface PropsType {
     children?: React.ReactNode;
 }
@@ -42,22 +47,15 @@ const NotUpdate = React.memo(
     ({ children }: any) => (typeof children === 'function' ? children() : children),
     () => true,
 );
-const projectList = [
-    {
-        name: '智鸽服务',
-        projectId: 10086,
-        color: 'green',
-        showChildren: false,
-        childrens: [
-            { parentId: 10086, name: '1-高德地图', projectId: 10087, color: '#0094ff' },
-            { parentId: 10086, name: '1-拖拽组件', projectId: 10088, color: 'hotpink' },
-        ],
-    },
-    { name: '微服务中台', projectId: 10000, color: 'geekblue' },
-    { name: '送餐倒车', projectId: 10010, color: 'geekblue' },
-];
 
+const tagList = [
+    { name: '运动', tagId: 1, color: 'geekblue' },
+    { name: '学习', tagId: 2, color: 'geekblue' },
+];
+let activeKeyArr: Array<any> = [];
 export default function IndexPage(props: PropsType) {
+    const projectId = history.location.query ? history.location.query.projectId : '';
+    const tagId = history.location.query ? history.location.query.tagId : '';
     const menuRef = useRef(null);
     const todoContainerRef = useRef(null);
     const responsive = useResponsive(); // 页面响应式数据
@@ -65,10 +63,29 @@ export default function IndexPage(props: PropsType) {
     const [unfoldMenu, setUnfoldMenu] = useState(responsive.middle); // 展开菜单
     const [startDrag, setStartDrag] = useState(false); // 是否正在拖拽
     const [menuWidth, setMenuWidth] = useState(210); // 菜单宽度
-    const [secMenu, setSecMenu] = useState<number>(); // 选择菜单
-    const [projectMenu, setProjectList] = useState(projectList); // 项目列表
+    const [projectMenu, setProjectList] = useState<Array<ProjectItem>>([]); // 项目列表
 
     const [showMobileStyle, setShowMobileStyle] = useState(!responsive.middle);
+
+    useEffect(() => {
+        // 请求数据
+        // const projectList = [
+        //     {
+        //         name: '智鸽服务',
+        //         projectId: 10086,
+        //         color: 'green',
+        //         showChildren:false,
+        //         childrens: [
+        //             { parentId: 10086, name: '1-高德地图', projectId: 10087, color: '#0094ff' },
+        //             { parentId: 10086, name: '1-拖拽组件', projectId: 10088, color: 'hotpink' },
+        //         ],
+        //     },
+        //     { name: '微服务中台', projectId: 10000, color: 'geekblue' },
+        //     { name: '送餐倒车', projectId: 10010, color: 'geekblue' },
+        // ];
+        // console.log('请求数据：',projectList);
+        // setProjectList(projectList)
+    }, []);
 
     useEffect(() => {
         const isMobile = !responsive.middle;
@@ -101,13 +118,26 @@ export default function IndexPage(props: PropsType) {
     };
     // 跳转对应路由
     const selectMenu = (item: MenuItem) => {
-        setSecMenu(item.id);
+        if (history.location.pathname.indexOf(item.url) !== -1) {
+            return;
+        }
         history.push(item.url);
     };
     // 跳转对应项目路由
     const selectProject = (item: ProjectItem) => {
+        const projectId = history.location.query ? history.location.query.projectId : '';
+        if (projectId === String(item.projectId)) {
+            return;
+        }
         history.push(`/todo/project?projectId=${item.projectId}`);
-        setSecMenu(item.projectId);
+    };
+    // 跳转对应标签路由
+    const selectTags = (item: TagsItem) => {
+        const tagId = history.location.query ? history.location.query.tagId : '';
+        if (tagId === String(item.tagId)) {
+            return;
+        }
+        history.push(`/todo/tags?tagId=${item.tagId}`);
     };
     const addProject = (e: React.MouseEvent) => {
         console.log('添加项目');
@@ -119,6 +149,7 @@ export default function IndexPage(props: PropsType) {
         e.preventDefault();
         e.stopPropagation();
     };
+    // 展开子项目
     const unfoldChildren = (e: React.MouseEvent, projectId: number) => {
         e.stopPropagation();
         const nextMenu = produce(projectMenu, (draftState) => {
@@ -130,11 +161,16 @@ export default function IndexPage(props: PropsType) {
         });
         setProjectList(nextMenu);
     };
+
+    // 编辑项目
     const operatorProject = (e: React.MouseEvent, projectId: number) => {
         e.stopPropagation();
         console.log('编辑project', projectId);
     };
-
+    // 编辑标签
+    const operatorTags = (e: React.MouseEvent, tagId: number) => {
+        console.log('编辑标签：', tagId);
+    };
     // 头部内容渲染
     const HeaderRender = () => (
         <div className="header">
@@ -163,6 +199,28 @@ export default function IndexPage(props: PropsType) {
         </div>
     );
 
+    // 路由是否包含某个路径
+    const includingPath = (path: string) => {
+        return history.location.pathname.indexOf(path) !== -1;
+    };
+
+    const activeKey = useMemo(
+        () => () => {
+            const query = history.location.query ? history.location.query : {};
+            if (Object.keys(query).includes('projectId')) {
+                activeKeyArr = [...new Set([...activeKeyArr, 'project'])];
+            }
+            if (Object.keys(query).includes('tagId')) {
+                activeKeyArr = [...new Set([...activeKeyArr, 'tags'])];
+            }
+            return activeKeyArr;
+        },
+        [],
+    );
+    // 折叠面板展开收起回调
+    const collapseChange = (value: any) => {
+        activeKeyArr = value;
+    };
     return (
         <Router history={history}>
             <div className="todo-page" onMouseUp={resizeMouseUp} ref={todoContainerRef}>
@@ -176,32 +234,31 @@ export default function IndexPage(props: PropsType) {
                     <ResponseShowDrawer {...{ unfoldMenu, setUnfoldMenu, showMobileStyle }}>
                         <div className={unfoldMenu ? 'left-menu' : 'left-menu hidden'} ref={menuRef} style={startDrag ? { width: `${menuWidth}px`, transition: 'none' } : { width: `${menuWidth}px` }}>
                             <div className="resize-handle" style={showMobileStyle ? { display: 'none' } : {}} id="left-menu-resize" onMouseDown={resizeMouseDowm}></div>
-
                             <div className={showMobileStyle ? 'list show-mobile' : 'list'}>
                                 {useMemo(
                                     () => (
                                         <React.Fragment>
-                                            <div className={secMenu === TODO_MENU_MAP.SUNDRY.id ? 'sundry sec-active' : 'sundry'} onClick={() => selectMenu(TODO_MENU_MAP.SUNDRY)}>
+                                            <div className={includingPath('sundry') ? 'sundry sec-active' : 'sundry'} onClick={() => selectMenu(TODO_MENU_MAP.SUNDRY)}>
                                                 <SundrySvg /> <span className="menu-text">杂事箱</span>
                                                 <Badge size="small" count={0}></Badge>
                                             </div>
-                                            <div className={secMenu === TODO_MENU_MAP.TODAY.id ? 'today sec-active' : 'today'} onClick={() => selectMenu(TODO_MENU_MAP.TODAY)}>
+                                            <div className={includingPath('today') ? 'today sec-active' : 'today'} onClick={() => selectMenu(TODO_MENU_MAP.TODAY)}>
                                                 <TodaySvg day={'05'} /> <span className="menu-text">今天</span>
                                                 <Badge size="small" count={0}></Badge>
                                             </div>
-                                            <div className={secMenu === TODO_MENU_MAP.PREVIEW.id ? 'preview sec-active' : 'preview'} onClick={() => selectMenu(TODO_MENU_MAP.PREVIEW)}>
+                                            <div className={includingPath('preview') ? 'preview sec-active' : 'preview'} onClick={() => selectMenu(TODO_MENU_MAP.PREVIEW)}>
                                                 <PreviewSvg />
                                                 <span className="menu-text">预览</span>
                                             </div>
                                         </React.Fragment>
                                     ),
-                                    [secMenu],
+                                    [],
                                 )}
-                                <Collapse bordered={false} style={{ width: `100%`, paddingRight: '13px' }}>
+                                <Collapse onChange={collapseChange} bordered={false} defaultActiveKey={activeKey()} style={{ width: `100%`, paddingRight: '13px' }}>
                                     <Panel header={<PanelHeader onClick={addProject} text="项目" />} key="project">
                                         {projectMenu.map((item) => (
                                             <React.Fragment key={item.projectId}>
-                                                <div className={secMenu === item.projectId ? 'project-item sec-active' : 'project-item'} onClick={() => selectProject(item)}>
+                                                <div className={projectId === String(item.projectId) ? 'project-item sec-active' : 'project-item'} onClick={() => selectProject(item)}>
                                                     {item.childrens && item.childrens.length > 0 && (
                                                         <i className={item.showChildren ? 'arrow down' : 'arrow right'} onClick={(e: React.MouseEvent) => unfoldChildren(e, item.projectId)}>
                                                             <ArrowRightSvg />
@@ -219,7 +276,7 @@ export default function IndexPage(props: PropsType) {
                                                             return (
                                                                 <div
                                                                     key={child.projectId}
-                                                                    className={secMenu === child.projectId ? 'project-item-children sec-active' : 'project-item-children'}
+                                                                    className={projectId === String(child.projectId) ? 'project-item-children sec-active' : 'project-item-children'}
                                                                     onClick={() => selectProject(child)}
                                                                 >
                                                                     <Badge size="small" color={child.color}></Badge>
@@ -235,7 +292,17 @@ export default function IndexPage(props: PropsType) {
                                             </React.Fragment>
                                         ))}
                                     </Panel>
-                                    <Panel header={<PanelHeader onClick={addTags} text="标签" />} key="tags"></Panel>
+                                    <Panel header={<PanelHeader onClick={addTags} text="标签" />} key="tags">
+                                        {tagList.map((item) => (
+                                            <div className={tagId === String(item.tagId) ? 'tag-item sec-active' : 'tag-item'} key={item.tagId} onClick={() => selectTags(item)}>
+                                                <Badge size="small" color={item.color}></Badge>
+                                                {item.name}
+                                                <i className="extend" onClick={(e: React.MouseEvent) => operatorTags(e, item.tagId)}>
+                                                    <ExtendSvg />
+                                                </i>
+                                            </div>
+                                        ))}
+                                    </Panel>
                                 </Collapse>
                             </div>
                         </div>
@@ -247,9 +314,10 @@ export default function IndexPage(props: PropsType) {
                                 <Route key={'/todo/today'} path={'/todo/today'} exact component={TabToday}></Route>
                                 <Route key={'/todo/sundry'} path={'/todo/sundry'} exact component={TabSundry}></Route>
                                 <Route key={'/todo/preview'} path={'/todo/preview'} exact component={TabPreview}></Route>
+                                <Route key={'/todo/project'} path={'/todo/project'} exact component={TbaProject}></Route>
                             </div>
                         ),
-                        [secMenu],
+                        [],
                     )}
                 </div>
             </div>

@@ -37,7 +37,7 @@ export default function LayoutPro(props: PropsType) {
                     <Col xs={4} md={14} lg={16} xl={18}>
                         <div className="menu">
                             <Menu theme={'dark'} style={{ height: '40' }} onClick={(v) => menuClick(v)} selectedKeys={[currentMenu]} mode="horizontal">
-                                <Menu.Item key="/home" icon={<BankOutlined />}>
+                                {/* <Menu.Item key="/home" icon={<BankOutlined />}>
                                     HOME
                                 </Menu.Item>
                                 <Menu.Item key="/todo" icon={<SnippetsOutlined />}>
@@ -45,7 +45,7 @@ export default function LayoutPro(props: PropsType) {
                                 </Menu.Item>
                                 <Menu.Item key="/notes" icon={<FormOutlined />}>
                                     NOTES
-                                </Menu.Item>
+                                </Menu.Item> */}
                             </Menu>
                         </div>
                     </Col>
